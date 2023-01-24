@@ -1,6 +1,6 @@
 const RestaurantMenu = () => {
     return (
-        <dix>Restaurant Menu</dix>
+        <div>Restaurant Menu</div>
     );
 };
 

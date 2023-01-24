@@ -1,6 +1,6 @@
 const CreateMenuItem = () => {
     return (
-        <dix>Create Menu Item</dix>
+        <div>Create Menu Item</div>
     );
 };
 

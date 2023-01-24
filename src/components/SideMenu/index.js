@@ -8,15 +8,15 @@ const SideMenu = () => {
     const menuItems = [
         {
             key: '/',
-            lable: 'Orders'
+            label: 'Orders' 
         },
         {
             key: 'menu',
-            lable: 'Restaurant Menu'
+            label: 'Restaurant Menu'
         },
         {
             key: 'restaurant',
-            lable: 'Create Restaurant Menu'
+            label: 'Create Restaurant Menu'
         }
         
     ];
@@ -26,7 +26,7 @@ const SideMenu = () => {
     };
 
     return (
-        <Menu item={menuItems} onClick={onMenuItemClick} /> 
+        <Menu items={menuItems} onClick={onMenuItemClick} />  
     );
 };
 
