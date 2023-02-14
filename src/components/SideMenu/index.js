@@ -8,7 +8,7 @@ const SideMenu = () => {
     const navigate = useNavigate();
     const { restaurant } = useRestaurantContext();
 
-    const menuItems = [
+    const mainMenuItems = [
         {
             key: '/',
             label: 'Orders'
@@ -16,7 +16,13 @@ const SideMenu = () => {
         {
             key: 'menu',
             label: 'Restaurant Menu'
-        },
+        }
+    ];
+
+    
+    const menuItems = [
+        ...(restaurant ? mainMenuItems: []),
+        
         {
             key: 'restaurant',
             label: 'Create Restaurant Menu'
@@ -39,10 +45,11 @@ const SideMenu = () => {
 
     return (
         <>
-        {restaurant && (<h2>(restaurant.name)</h2>)}
+        {restaurant && (<h2>{restaurant.name}</h2>)}
         <Menu items={menuItems} onClick={onMenuItemClick} />
         </>
     );
+    
 };
 
 export default SideMenu;
