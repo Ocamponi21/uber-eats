@@ -1,16 +1,33 @@
-import {Card, Descriptions, Divider, List, Button } from 'antd';
+import {Card, Descriptions, Divider, List, Button, Tag, Spin } from 'antd';
 import { useParams } from 'react-router-dom';
-import dishes from '../../data/dashboard/dishes.json';
+import { useEffect, useState } from 'react';
+import { DataStore } from 'aws-amplify';
+import { Order, User, OrderDish, Dish } from '../../models';
+
+const statusToColor = {
+    PENDING: 'blue',
+    COMPLETED: 'green',
+    ACCEPTED: 'orange',
+    DECLINED: 'red',
+};
 
 const DetailedOrder = () => {
 
-const { id } = useParams();
+    const { id } = useParams();
+
+    const [order, setOrder] = useState({});
+    const [ customer, setCustomer] = useState(null);
+    const [ orderDishes, setOrderDishes] = useState([]);
+    const [ finalOrderDishes, setFinalOrderDishes] = useState([]);
+
+    useEffect(() => {
+        if (!id) {
+            return;
+        }
+        DataStore.query(Order, id).then(setOrder);
+    }, [id]);
 
 
-    const total = dishes.reduce((sum,dish) => {
-        return sum + (dish.quantity * dish.price)
-
-    }, 0);
     return (
        <Card title={`Order Number ${id}`} style={styles.page}>
             <Descriptions bordered column={{lg: 1, md: 1, sm: 1}}>
