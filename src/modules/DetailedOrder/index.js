@@ -27,21 +27,59 @@ const DetailedOrder = () => {
         DataStore.query(Order, id).then(setOrder);
     }, [id]);
 
+    useEffect(() => {
+        if (!order?.userID) {
+            return;
+        }
+        DataStore.query(User, order.userID).then(setCustomer);
+    }, [order?.userID]);
+
+    useEffect(() => {
+        if (!order?.id) {
+            return;
+        }
+        DataStore.query(OrderDish, (od) =>
+        od.orderID.eq(order.id)).then(setOrderDishes);
+    }, [order?.id]);
+
+    useEffect(() => {
+        if (!orderDishes) {
+            return;
+        }
+        //query all the dishes
+        const fetchDishes = async () => {
+            const dishes = await DataStore.query(Dish)
+            //assign the dishes to the order dishes where the order are the same
+            setFinalOrderDishes( 
+                orderDishes.map(orderDishes => ({
+                    ...orderDishes,
+                    Dish: dishes.find(d => d.id === orderDishes.orderDishDishID),
+                }))
+            );
+        };
+        fetchDishes();
+    }, [orderDishes]);
+
+    if (!order){
+        return <Spin size ='large'/>
+    }
 
     return (
        <Card title={`Order Number ${id}`} style={styles.page}>
             <Descriptions bordered column={{lg: 1, md: 1, sm: 1}}>
-            <Descriptions.Item label='Order Status'>APPROVED</Descriptions.Item>
-            <Descriptions.Item label='Customer '>Nicolas Ocampo</Descriptions.Item>
-            <Descriptions.Item label='Customer Address'>1266 New Brooklyn Erial Rd</Descriptions.Item>
+            <Descriptions.Item label='Order Status'>
+                <Tag color={statusToColor[order?.statusToColor]}>{order?.status}</Tag>
+            </Descriptions.Item>
+            <Descriptions.Item label='Customer '>{customer?.name}</Descriptions.Item>
+            <Descriptions.Item label='Customer Address'>{customer?.address}</Descriptions.Item>
             </Descriptions>
-            <Divider />
+            <Divider /> 
             <List   
-                dataSource={dishes}
+                dataSource={finalOrderDishes}
                 renderItem={(dishItem) => (
                     <List.Item>
-                        <div style={styles.dishItems}>{dishItem.name} x{dishItem.quantity}</div>
-                        <div>${dishItem.price}</div>
+                        <div style={styles.dishItems}>{dishItem?.Dish?.name} x{dishItem.quantity}</div>
+                        <div>${dishItem?.Dish?.price.toFixed(2)}</div>
                         </List.Item>
                 )}
           >
@@ -49,7 +87,7 @@ const DetailedOrder = () => {
             <Divider />
             <div style ={styles.totalContainer}>
                 <h2>Total:</h2>
-                <h2 style={styles.totalPrice}>${total}</h2>
+                <h2 style={styles.totalPrice}>${order.total && order.total.toFixed(2)}</h2>
             </div> 
             <Divider />
             <div style={styles.buttonsContainer}>
