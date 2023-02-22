@@ -2,7 +2,7 @@ import {Card, Descriptions, Divider, List, Button, Tag, Spin } from 'antd';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { DataStore } from 'aws-amplify';
-import { Order, User, OrderDish, Dish } from '../../models';
+import { Order, User, OrderDish, Dish, OrderStatus} from '../../models';
 
 const statusToColor = {
     PENDING: 'blue',
@@ -60,6 +60,25 @@ const DetailedOrder = () => {
         fetchDishes();
     }, [orderDishes]);
 
+    const acceptOrder = async () => {
+        const updatedOrder = await DataStore.save(Order.copyOf(order, updated => {
+            updated.status = OrderStatus.ACCEPTED;
+        }));
+        setOrder (updatedOrder);
+    };
+    const declineOrder = async () => {
+        const updatedOrder = await DataStore.save(Order.copyOf(order, updated => {
+            updated.status = OrderStatus.DECLINED;
+        }));
+        setOrder (updatedOrder);
+    };
+    const foodIsDone = async () => {
+        const updatedOrder = await DataStore.save(Order.copyOf(order, updated => {
+            updated.status = OrderStatus.COMPLETED;
+        }));
+        setOrder (updatedOrder);
+    };
+
     if (!order){
         return <Spin size ='large'/>
     }
@@ -68,7 +87,7 @@ const DetailedOrder = () => {
        <Card title={`Order Number ${id}`} style={styles.page}>
             <Descriptions bordered column={{lg: 1, md: 1, sm: 1}}>
             <Descriptions.Item label='Order Status'>
-                <Tag color={statusToColor[order?.statusToColor]}>{order?.status}</Tag>
+                <Tag color={statusToColor[order?.status]}>{order?.status}</Tag>
             </Descriptions.Item>
             <Descriptions.Item label='Customer '>{customer?.name}</Descriptions.Item>
             <Descriptions.Item label='Customer Address'>{customer?.address}</Descriptions.Item>
@@ -97,6 +116,7 @@ const DetailedOrder = () => {
                     type='primary'
                     size='large'
                     style={styles.button}
+                    onClick = {declineOrder}
                 >
                     Decline Order
                 </Button>
@@ -105,6 +125,7 @@ const DetailedOrder = () => {
                     type='primary'
                     size='large'
                     style={styles.button}
+                    onClick = {acceptOrder}
                 >
                     Accept Order
                 </Button>
@@ -113,6 +134,7 @@ const DetailedOrder = () => {
                     type='default'
                     size='large'
                     style={styles.button}
+                    onClick = {foodIsDone}
                 >
                     Food is Done
                 </Button>
