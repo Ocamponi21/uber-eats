@@ -7,6 +7,7 @@ const SideMenu = () => {
 
     const navigate = useNavigate();
     const { restaurant } = useRestaurantContext();
+    //console.log(restaurant);
 
     const mainMenuItems = [
         {
@@ -16,6 +17,10 @@ const SideMenu = () => {
         {
             key: 'menu',
             label: 'Restaurant Menu'
+        },
+        {
+            key: 'other',
+            label: 'Other Restaurants '
         }
     ];
 

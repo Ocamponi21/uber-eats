@@ -37,4 +37,3 @@ const RestaurantContextProvider = ({children}) => {
 export default RestaurantContextProvider; 
 
 export const useRestaurantContext =() => useContext(RestaurantContext);
-
